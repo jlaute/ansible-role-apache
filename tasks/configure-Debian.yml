@@ -72,3 +72,19 @@
     state: absent
   notify: restart apache
   when: apache_remove_default_vhost
+
+- name: Create DocumentRoot
+  file:
+    path: "{{ item.documentroot }}"
+    owner: "www-data"
+    group: "www-data"
+    mode: u=rwx,g=rwx+s,o=r
+    state: directory
+  with_items: "{{ apache_vhosts }}"
+
+- name: set umask for www-data
+  lineinfile:
+    path: "{{ apache_conf_path }}/envvars"
+    regexp: "^umask"
+    line: "umask 002"
+  notify: restart apache
