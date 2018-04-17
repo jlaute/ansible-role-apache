@@ -73,14 +73,20 @@
   notify: restart apache
   when: apache_remove_default_vhost
 
+- stat:
+    path: "{{ item.documentroot }}"
+  register: docroot_sym
+  with_items: "{{ apache_vhosts }}"
+
 - name: Create DocumentRoot
   file:
-    path: "{{ item.documentroot }}"
+    path: "{{ item.item.documentroot }}"
     owner: "www-data"
     group: "www-data"
     mode: u=rwx,g=rwx+s,o=r
     state: directory
-  with_items: "{{ apache_vhosts }}"
+  with_items: "{{ docroot_sym.results }}"
+  when: item.stat.islnk == false
 
 - name: set umask for www-data
   lineinfile:
