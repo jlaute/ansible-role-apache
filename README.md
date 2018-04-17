@@ -39,6 +39,7 @@ On Debian/Ubuntu, a default virtualhost is included in Apache's configuration. S
       # Add other global settings on subsequent lines.
 
 You can add or override global Apache configuration settings in the role-provided vhosts file (assuming `apache_create_vhosts` is true) using this variable. By default it only sets the DirectoryIndex configuration.
+To add SSL vhosts, you can insert the certificates directly in here. You don't need to use another variable for that. As soon as `certificate_file` is set, the ssl host will be created.
 
     apache_vhosts:
       # Additional optional properties: 'serveradmin, serveraliasse, extra_parameters'.
@@ -46,6 +47,9 @@ You can add or override global Apache configuration settings in the role-provide
         serveraliasse: ["local.dev"]
         vhostsprefix: "local"
         documentroot: "/var/www/html"
+        certificate_file: "/path/to/example.crt"
+        certificate_key_file: "/path/to/example.key"
+        certificate_chain_file: "/path/to/certificate_chain.crt"
 
 Add a set of properties per virtualhost, including `servername` (required), `documentroot` (required), `allow_override` (optional: defaults to the value of `apache_allow_override`), `options` (optional: defaults to the value of `apache_options`), `serveradmin` (optional), `serveraliasse` (optional) and `extra_parameters` (optional: you can add whatever additional configuration lines you'd like in here).
 
@@ -60,22 +64,6 @@ Here's an example using `extra_parameters` to add a RewriteRule to redirect all 
           RewriteRule ^(.*)$ http://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 The `|` denotes a multiline scalar block in YAML, so newlines are preserved in the resulting configuration file output.
-
-    apache_vhosts_ssl: []
-
-No SSL vhosts are configured by default, but you can add them using the same pattern as `apache_vhosts`, with a few additional directives, like the following example:
-
-    apache_vhosts_ssl:
-      - servername: "local.dev"
-        documentroot: "/var/www/html"
-        certificate_file: "/home/vagrant/example.crt"
-        certificate_key_file: "/home/vagrant/example.key"
-        certificate_chain_file: "/path/to/certificate_chain.crt"
-        extra_parameters: |
-          RewriteCond %{HTTP_HOST} !^www\. [NC]
-          RewriteRule ^(.*)$ http://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-
-Other SSL directives can be managed with other SSL-related role variables.
 
     apache_ssl_protocol: "All -SSLv2 -SSLv3"
     apache_ssl_cipher_suite: "AES256+EECDH:AES256+EDH"
