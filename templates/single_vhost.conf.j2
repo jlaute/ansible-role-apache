@@ -1,23 +1,23 @@
 {{ apache_global_vhost_settings }}
 
 {# Set up VirtualHosts #}
-{% for vhost in apache_vhosts %}
 <VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>
-  ServerName {{ vhost.servername }}
-{% if vhost.serveraliasse is defined %}
-  ServerAlias{% for alias in vhost.serveraliasse %} {{ alias }}{% endfor %}
-{% endif %}
-{% if vhost.documentroot is defined %}
-  DocumentRoot "{{ vhost.documentroot }}"
+  ServerName {{ item.servername }}
+{% if item.serveraliasse is defined %}
+  ServerAlias{% for alias in item.serveraliasse %} {{ alias }}{% endfor %}
 {% endif %}
 
-{% if vhost.serveradmin is defined %}
-  ServerAdmin {{ vhost.serveradmin }}
+{% if item.documentroot is defined %}
+  DocumentRoot "{{ item.documentroot }}"
 {% endif %}
-{% if vhost.documentroot is defined %}
-  <Directory "{{ vhost.documentroot }}">
-    AllowOverride {{ vhost.allow_override | default(apache_allow_override) }}
-    Options {{ vhost.options | default(apache_options) }}
+
+{% if item.serveradmin is defined %}
+  ServerAdmin {{ item.serveradmin }}
+{% endif %}
+{% if item.documentroot is defined %}
+  <Directory "{{ item.documentroot }}">
+    AllowOverride {{ item.allow_override | default(apache_allow_override) }}
+    Options {{ item.options | default(apache_options) }}
 {% if apache_vhosts_version == "2.2" %}
     Order allow,deny
     Allow from all
@@ -26,23 +26,21 @@
 {% endif %}
   </Directory>
 {% endif %}
-{% if vhost.extra_parameters is defined %}
-  {{ vhost.extra_parameters }}
+{% if item.extra_parameters is defined %}
+  {{ item.extra_parameters }}
 {% endif %}
 </VirtualHost>
 
-{% endfor %}
-
 {# Set up SSL VirtualHosts #}
-{% for vhost in apache_vhosts_ssl %}
-{% if apache_ignore_missing_ssl_certificate or apache_ssl_certificates.results[loop.index0].stat.exists %}
+{% if apache_ignore_missing_ssl_certificate or item.certificate_file %}
 <VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port_ssl }}>
-  ServerName {{ vhost.servername }}
-{% if vhost.serveraliasse is defined %}
-  ServerAlias{% for alias in vhost.serveraliasse %} {{ alias }}{% endfor %}
+  ServerName {{ item.servername }}
+{% if item.serveraliasse is defined %}
+  ServerAlias{% for alias in item.serveraliasse %} {{ alias }}{% endfor %}
 {% endif %}
-{% if vhost.documentroot is defined %}
-  DocumentRoot "{{ vhost.documentroot }}"
+
+{% if item.documentroot is defined %}
+  DocumentRoot "{{ item.documentroot }}"
 {% endif %}
 
   SSLEngine on
@@ -52,19 +50,19 @@
 {% if apache_vhosts_version == "2.4" %}
   SSLCompression off
 {% endif %}
-  SSLCertificateFile {{ vhost.certificate_file }}
-  SSLCertificateKeyFile {{ vhost.certificate_key_file }}
-{% if vhost.certificate_chain_file is defined %}
-  SSLCertificateChainFile {{ vhost.certificate_chain_file }}
+  SSLCertificateFile {{ item.certificate_file }}
+  SSLCertificateKeyFile {{ item.certificate_key_file }}
+{% if item.certificate_chain_file is defined %}
+  SSLCertificateChainFile {{ item.certificate_chain_file }}
 {% endif %}
 
-{% if vhost.serveradmin is defined %}
-  ServerAdmin {{ vhost.serveradmin }}
+{% if item.serveradmin is defined %}
+  ServerAdmin {{ item.serveradmin }}
 {% endif %}
-{% if vhost.documentroot is defined %}
-  <Directory "{{ vhost.documentroot }}">
-    AllowOverride {{ vhost.allow_override | default(apache_allow_override) }}
-    Options {{ vhost.options | default(apache_options) }}
+{% if item.documentroot is defined %}
+  <Directory "{{ item.documentroot }}">
+    AllowOverride {{ item.allow_override | default(apache_allow_override) }}
+    Options {{ item.options | default(apache_options) }}
 {% if apache_vhosts_version == "2.2" %}
     Order allow,deny
     Allow from all
@@ -73,10 +71,9 @@
 {% endif %}
   </Directory>
 {% endif %}
-{% if vhost.extra_parameters is defined %}
-  {{ vhost.extra_parameters }}
+{% if item.extra_parameters is defined %}
+  {{ item.extra_parameters }}
 {% endif %}
 </VirtualHost>
 
 {% endif %}
-{% endfor %}
