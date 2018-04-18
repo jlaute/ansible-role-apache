@@ -86,7 +86,7 @@
     mode: u=rwx,g=rwx+s,o=r
     state: directory
   with_items: "{{ docroot_sym.results }}"
-  when: item.stat.islnk == false
+  when: item.stat.islnk is not defined or item.stat.islnk == false
 
 - name: set umask for www-data
   lineinfile:
