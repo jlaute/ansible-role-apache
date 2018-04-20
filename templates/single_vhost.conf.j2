@@ -32,7 +32,7 @@
 </VirtualHost>
 
 {# Set up SSL VirtualHosts #}
-{% if apache_ignore_missing_ssl_certificate or item.certificate_file %}
+{% if apache_ignore_missing_ssl_certificate or item.certificate_file is defined %}
 <VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port_ssl }}>
   ServerName {{ item.servername }}
 {% if item.serveraliasse is defined %}
