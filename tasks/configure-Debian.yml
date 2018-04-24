@@ -105,3 +105,4 @@
     group: www-data
   with_items: "{{ apache_vhosts }}"
   when: item.basic_auth_user is defined and item.basic_auth_password is defined
+  notify: restart apache
