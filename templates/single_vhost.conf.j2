@@ -86,6 +86,7 @@
     AuthName "Restricted Area"
     AuthBasicProvider file
     AuthUserFile "/var/www/passwdfile"
+    Require expr %{REQUEST_URI} =~ m#^/.well-known/acme-challenge/#
     Require valid-user
 </Location>
 {% endif %}
