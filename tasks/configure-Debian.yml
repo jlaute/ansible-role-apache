@@ -94,3 +94,14 @@
     regexp: "^umask"
     line: "umask 002"
   notify: restart apache
+
+- name: Set basic Auth
+  become: yes
+  htpasswd:
+    path: /var/www/passwdfile
+    name: "{{ item.basic_auth_user }}"
+    password: "{{ item.basic_auth_password }}"
+    owner: www-data
+    group: www-data
+  with_items: "{{ apache_vhosts }}"
+  when: item.basic_auth_user is defined and item.basic_auth_password is defined

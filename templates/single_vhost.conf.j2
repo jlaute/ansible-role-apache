@@ -18,11 +18,20 @@
   <Directory "{{ item.documentroot }}">
     AllowOverride {{ item.allow_override | default(apache_allow_override) }}
     Options {{ item.options | default(apache_options) }}
-{% if apache_vhosts_version == "2.2" %}
+
+{% if item.basic_auth_user is defined and item.basic_auth_password is defined %}
+    AuthType Basic
+    AuthName "Restricted Area"
+    AuthBasicProvider file
+    AuthUserFile "/var/www/passwdfile"
+    Require valid-user
+{% else %}
+    {% if apache_vhosts_version == "2.2" %}
     Order allow,deny
     Allow from all
-{% else %}
+    {% else %}
     Require all granted
+    {% endif %}
 {% endif %}
   </Directory>
 {% endif %}
@@ -63,11 +72,20 @@
   <Directory "{{ item.documentroot }}">
     AllowOverride {{ item.allow_override | default(apache_allow_override) }}
     Options {{ item.options | default(apache_options) }}
-{% if apache_vhosts_version == "2.2" %}
+
+{% if item.basic_auth_user is defined and item.basic_auth_password is defined %}
+    AuthType Basic
+    AuthName "Restricted Area"
+    AuthBasicProvider file
+    AuthUserFile "/var/www/passwdfile"
+    Require valid-user
+{% else %}
+    {% if apache_vhosts_version == "2.2" %}
     Order allow,deny
     Allow from all
-{% else %}
+    {% else %}
     Require all granted
+    {% endif %}
 {% endif %}
   </Directory>
 {% endif %}
