@@ -11,8 +11,8 @@
   DocumentRoot "{{ item.documentroot }}"
 {% endif %}
 
-  CustomLog /var/log/apache/{{ item.servername }}-access.log combined
-  ErrorLog /var/log/apache/{{ item.servername }}-error.log
+  CustomLog /var/log/apache2/{{ item.servername }}-access.log combined
+  ErrorLog /var/log/apache2/{{ item.servername }}-error.log
 
 {% if item.serveradmin is defined %}
   ServerAdmin {{ item.serveradmin }}
@@ -47,8 +47,8 @@
   DocumentRoot "{{ item.documentroot }}"
 {% endif %}
 
-  CustomLog /var/log/apache/{{ item.servername }}-access.log combined
-  ErrorLog /var/log/apache/{{ item.servername }}-error.log
+  CustomLog /var/log/apache2/{{ item.servername }}-access.log combined
+  ErrorLog /var/log/apache2/{{ item.servername }}-error.log
 
   SSLEngine on
   SSLCipherSuite {{ apache_ssl_cipher_suite }}
