@@ -59,3 +59,4 @@ apache_restart_state: restarted
 apache_packages_state: present
 
 apache_split_vhosts: false
+apache_x_frame_options: "sameorigin"
