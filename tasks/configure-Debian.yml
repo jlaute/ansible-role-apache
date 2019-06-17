@@ -47,7 +47,7 @@
     mode: 0644
   notify: restart apache
   with_items: "{{ apache_vhosts }}"
-  when: apache_create_vhosts and apache_split_vhosts
+  when: apache_create_vhosts and apache_split_vhosts and item.vhostsprefix
 
 - name: Add vhost symlink in sites-enabled.
   file:
@@ -64,7 +64,7 @@
     state: link
   notify: restart apache
   with_items: "{{apache_vhosts}}"
-  when: apache_create_vhosts and apache_split_vhosts
+  when: apache_create_vhosts and apache_split_vhosts and item.vhostsprefix
 
 - name: Remove default vhost in sites-enabled.
   file:
